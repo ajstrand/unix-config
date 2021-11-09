@@ -5,6 +5,9 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   vim.fn.execute('!git clone https://github.com/wbthomason/packer.nvim ' .. install_path)
 end
 
+local globalSettings = vim.g
+
+
 vim.api.nvim_exec(
   [[
   augroup Packer
@@ -15,252 +18,15 @@ vim.api.nvim_exec(
   false
 )
 
-local use = require('packer').use
-require('packer').startup(function()
-  use 'wbthomason/packer.nvim' -- Package manager
-  use 'tpope/vim-fugitive' -- Git commands in nvim
-  use 'tpope/vim-rhubarb' -- Fugitive-companion to interact with github
-  use 'tpope/vim-commentary' -- "gc" to comment visual regions/lines
-  use 'ludovicchabant/vim-gutentags' -- Automatic tags management
-  -- UI to select things (files, grep results, open buffers...)
-  use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' } }
-  use 'joshdick/onedark.vim' -- Theme inspired by Atom
-  use 'itchyny/lightline.vim' -- Fancier statusline
-  -- Add indentation guides even on blank lines
-  use 'lukas-reineke/indent-blankline.nvim'
-  -- Add git related info in the signs columns and popups
-  use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } }
-  -- Highlight, edit, and navigate code using a fast incremental parsing library
-  use 'nvim-treesitter/nvim-treesitter'
-  -- Additional textobjects for treesitter
-  use 'nvim-treesitter/nvim-treesitter-textobjects'
-  use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
-  use 'hrsh7th/nvim-cmp' -- Autocompletion plugin
-  use 'hrsh7th/cmp-nvim-lsp'
-  use 'saadparwaiz1/cmp_luasnip'
-  use 'L3MON4D3/LuaSnip' -- Snippets plugin
-  use 'kosayoda/nvim-lightbulb'
-  use {
-  "folke/which-key.nvim",
-  config = function()
-			require("whichkey")
-      local mappings = {
 
-        ["/"] = "Comment Toggle",
-        ["w"] = {
-          name = "+Windows",
-          ["c"] = { "Close Split" },
-          ["h"] = { "Expand Split right" },
-          ["l"] = { "Expand Split left" },
-          ["j"] = { "Expand Split above" },
-          ["k"] = { "Expand Split below" },
-          ["b"] = { "Balance Splits" },
-          ["s"] = { "Split Horizontal" },
-          ["v"] = { "Split Vertical" },
-        },
-        b = {
-          name = "+Buffer",
-          ["Tab"] = { "Next Buffer" },
-          ["Shift Tab"] = { "Previous Buffer" },
-          ["n"] = { "New Buffer" },
-          ["d"] = { "Close Buffer" },
-          ["p"] = { "Pick a Buffer" },
-        },
-        g = {
-          name = "+Git",
-          g = { "Open LazyGit" },
-          c = { "Checkout Commits" },
-          C = { "Checkout commit(for current file)" },
-          b = { "Checkout Branch" },
-          t = { "Open changed file" },
-          j = { "Next Hunk" },
-          k = { "Prev Hunk" },
-          l = { "Blame" },
-          p = { "Preview Hunk" },
-          r = { "Reset Hunk" },
-          R = { "Reset Buffer" },
-          s = { "Stage Hunk" },
-          u = { "Undo Stage Hunk" },
-        },
-        h = {
-          name = "+Help",
-          t = { "Builtins" },
-          c = { "Commands" },
-          h = { "Help Pages" },
-          k = { "Key Maps" },
-          o = { "Options" },
-          a = { "Auto Commands" },
-        },
-        c = {
-          name = "+Code",
-          i = { "Repl" },
-          r = { "Rename Function" },
-          a = { "Code Actions" },
-          f = { "Find Reference" },
-          s = { "Toggle Symbols Tree" },
-          d = { "Declarations" },
-          n = { "Diagnostic next" },
-          p = { "Diagnostic prev" },
-          l = { "Error List" },
-          g = {
-            name = "+Goto",
-            D = { "Jump to Definition" },
-            r = { "Jump to Reference" },
-            i = { " Buf implementation " },
-          },
-        },
-        p = {
-          name = "+Plugins",
-          i = { "Install" },
-          s = { "Sync" },
-          c = { "Clean" },
-          C = { "Compile" },
-          t = { "Status" },
-          r = { "Reload neovim" },
-        },
-        s = {
-          name = "+Search",
-          g = { "Word Grep" },
-          b = { "Search in Buffer" },
-          h = { "Command History" },
-          m = { "Jump to Marks" },
-          c = { "Colorschemes with previwer" },
-        },
-        f = {
-          name = "+Files",
-          f = { "Find Files" },
-          c = { "Nvim Config Files" },
-          o = { "Open Recent Files" },
-          n = { "New File" },
-          m = { "Media Files" },
-          t = { "Format File" },
-          r = { "Format File" },
-          b = { "Telescope Browse Files" },
-        },
-        [":"] = { "Command History" },
-        q = {
-          name = "+Quit/Session",
-          ["!"] = { "Quit without saving" },
-          q = { "Save Quit" },
-          s = { "Save Session" },
-          l = { "Session Load" },
-        },
-        t = {
-          name = "+Terminal",
-          t = { "Open Terminal" },
-          v = { "Vert Split Terminal" },
-          s = { "Vert Split Terminal" },
-        },
-        z = {
-          name = "+Zen",
-          z = { "Atraxis Mode" },
-          m = { "Minimalist Mode" },
-          f = { "Focus Mode" },
-        },
-        e = { "Nvim Tree" },
-      }
-      
-      for i = 0, 10 do
-        mappings[tostring(i)] = "which_key_ignore"
-      end
-      
-      -- for k, v in pairs(Sv.user_which_key) do
-      -- 	mappings[k] = v
-      -- end
-      
-      local wk = require("which-key")
-      
-      wk.register(mappings, { prefix = "<leader>" })
-  end
-}
-use({
-  "rinx/nvim-minimap",
-  cmd = {
-    "Minimap",
-    "MinimapClose",
-    "MinimapToggle",
-    "MinimapRefresh",
-    "MinimapUpdateHighlight",
-  }
-})
-use 'folke/lsp-colors.nvim'
-use {
-  "folke/trouble.nvim",
-  requires = "kyazdani42/nvim-web-devicons",
-  config = function()
-    require("trouble").setup {
-      -- your configuration comes here
-      -- or leave it empty to use the default settings
-      -- refer to the configuration section below
-    }
-  end
-}
-use {
-  "folke/twilight.nvim",
-  config = function()
-    require("twilight").setup {
-      -- your configuration comes here
-      -- or leave it empty to use the default settings
-      -- refer to the configuration section below
-    }
-  end
-}
-use {
-	"luukvbaal/nnn.nvim",
-	config = function() require("nnn").setup() end
-}
-use { "rcarriga/vim-ultest", requires = {"vim-test/vim-test"}, run = ":UpdateRemotePlugins" }
-use 'folke/tokyonight.nvim'
-use 'mhartington/oceanic-next'
-use 'mfussenegger/nvim-jdtls'
-use "Pocco81/AutoSave.nvim"
-use "Pocco81/HighStr.nvim"
-use 'mtth/scratch.vim'
-use "numtostr/FTerm.nvim"
-use 'williamboman/nvim-lsp-installer'
-use({
-    'rose-pine/neovim',
-    as = 'rose-pine',
-    config = function()
-        -- Options (see available options below)
-        vim.g.rose_pine_variant = 'base'
+require("plugins")
 
-        -- Load colorscheme after options
-        vim.cmd('colorscheme rose-pine')
-    end
-})
-use({
-  'weilbith/nvim-code-action-menu',
-  cmd = {'CodeActionMenu'}
-})
-use {
-  "folke/zen-mode.nvim",
-  config = function()
-    require("zen-mode").setup {
-      -- your configuration comes here
-      -- or leave it empty to use the default settings
-      -- refer to the configuration section below
-    }
-  end
-}
-use({
-    "vuki656/package-info.nvim",
-    requires = "MunifTanjim/nui.nvim",
-})
-use 'folke/todo-comments.nvim'
-  use 'onsails/lspkind-nvim'
-   -- A plugin for neovim that automatically creates missing directories
-  -- on saving a file.
-  use {
-    'jghauser/mkdir.nvim',
-    cmd = 'new',
-    config = function()
-      require('mkdir')
-    end
-  }
-   -- LSP signature.
-  use { "ray-x/lsp_signature.nvim" }
-end)
+-- settings for vimtex
+globalSettings.vimtex_view_method='zathura'
+globalSettings.tex_flavor='latex'
+
+require('package-info').setup()
+
 
 -- or create a vim command
 vim.cmd('command! Fterm lua require("FTerm").toggle()')
@@ -349,13 +115,14 @@ require('gitsigns').setup {
   },
 }
 
---Telescope
+-- Telescope
 require('telescope').setup {
   defaults = {
     mappings = {
       i = {
         ['<C-u>'] = false,
         ['<C-d>'] = false,
+	["<C-h>"] = "which_key"
       },
     },
   },
@@ -370,6 +137,22 @@ vim.api.nvim_set_keymap('n', '<leader>sd', [[<cmd>lua require('telescope.builtin
 vim.api.nvim_set_keymap('n', '<leader>sp', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>so', [[<cmd>lua require('telescope.builtin').tags{ only_current_buffer = true }<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>?', [[<cmd>lua require('telescope.builtin').oldfiles()<CR>]], { noremap = true, silent = true })
+
+
+-- latex mappings
+vim.api.nvim_set_keymap('n', '<Leader>lc', ':VimtexCompile<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>ls', ':VimtexCompileSelected<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>li', ':VimtexInfo<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>lt', ':VimtexTocToggle<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>lv', ':VimtexView<CR>', { noremap = true, silent = true })
+
+-- package manager
+vim.api.nvim_set_keymap('n', '<Leader>pi', ':PackerInstall<CR>',  { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>pu', ':PackerUpdate<CR>',   { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>pc', ':PackerClean<CR>',    { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>pl', ':PackerLoad<CR>',     { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<Leader>ps', ':PackerSync<CR>',     { noremap = true, silent = true })
+
 
 -- Treesitter configuration
 -- Parsers must be installed manually via :TSInstall
@@ -552,5 +335,48 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+  },
+}
+
+local lspconfig = require"lspconfig"
+
+local eslint = {
+  lintCommand = "eslint_d -f unix --stdin --stdin-filename ${INPUT}",
+  lintStdin = true,
+  lintFormats = {"%f:%l:%c: %m"},
+  lintIgnoreExitCode = true,
+  formatCommand = "eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}",
+  formatStdin = true
+}
+
+lspconfig.efm.setup {
+  on_attach = function(client)
+    client.resolved_capabilities.document_formatting = true
+    client.resolved_capabilities.goto_definition = false
+    set_lsp_config(client)
+  end,
+  root_dir = function()
+    if not eslint_config_exists() then
+      return nil
+    end
+    return vim.fn.getcwd()
+  end,
+  settings = {
+    languages = {
+      javascript = {eslint},
+      javascriptreact = {eslint},
+      ["javascript.jsx"] = {eslint},
+      typescript = {eslint},
+      ["typescript.tsx"] = {eslint},
+      typescriptreact = {eslint}
+    }
+  },
+  filetypes = {
+    "javascript",
+    "javascriptreact",
+    "javascript.jsx",
+    "typescript",
+    "typescript.tsx",
+    "typescriptreact"
   },
 }
